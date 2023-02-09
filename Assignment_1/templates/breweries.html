@@ -1,0 +1,29 @@
+<html>
+  <head>
+    <title>Breweries near location</title>
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+   <div class="container mt-5">
+  <h2 class="text-center">Breweries near your location</h2>
+  <div class="row">
+    {% for brewery in breweries %}
+    <div class="col-sm-4 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title"><button type="button" class="btn btn-primary m-5" onclick="location.href='/reviews/{{ brewery.id }}'">{{ brewery.name }}</button></h5>
+          <p class="card-text">{{ brewery.street }}<br>
+            {{ brewery.city }}, {{ brewery.state }} {{ brewery.postal_code }}<br>
+            {{ brewery.phone }}<br>
+            <a href="{{ brewery.website_url }}" target="_blank" rel="noopener noreferrer">{{ brewery.website_url }}</a><br>
+          </p>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+  </body>
+</html>
