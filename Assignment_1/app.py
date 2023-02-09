@@ -31,12 +31,8 @@ def breweries():
     if lat and lng:
         breweries = get_breweries_by_location(lat, lng)
         return render_template('breweries.html', breweries=breweries)
-    # if postal_code:
-    #     breweries = get_breweries(postal_code)
-    #     print(breweries)
-    #     return render_template('breweries.html', breweries=breweries)
     else:
-        return render_template('index.html', error=True)
+        return render_template('error.html', error=True)
 
 
 @app.route('/restaurants', methods=['POST'])
@@ -73,4 +69,4 @@ def reviews(brewery_id):
     elif google_rating:
         return render_template('ratings.html', yelp_rating=None, google_rating=google_rating)
     else:
-        return render_template('index.html', error=True)
+        return render_template('error.html', error=True)
