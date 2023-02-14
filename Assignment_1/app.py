@@ -1,6 +1,12 @@
+import math
+
+import requests
 from flask import Flask, render_template, request
+from requests import Session
+
 from interface import get_coordinates, get_postal_code, get_breweries_by_postal_code, get_restaurants, \
     get_breweries_by_location, get_rating_google, get_rating_yelp
+import xml.etree.ElementTree as ET
 
 app = Flask(__name__)
 
@@ -60,13 +66,41 @@ def reviews(brewery_id):
     :return:
     """
     yelp_rating = get_rating_yelp(brewery_id)
+    if yelp_rating:
+        yelp_rating_floor = math.trunc(yelp_rating)
+        print("Yelp rating trunc: ", yelp_rating_floor)
+        soap_url = "https://number-conversion-service.p.rapidapi.com/webservicesserver/NumberConversion.wso"
+        request_body = f"<?xml version='1.0' encoding='utf-8'?><soap:Envelope xmlns:soap='http://schemas.xmlsoap.org/soap/envelope/'><soap:Body><NumberToWords xmlns='http://www.dataaccess.com/webservicesserver/'><ubiNum>{yelp_rating_floor}</ubiNum></NumberToWords></soap:Body></soap:Envelope>"
+        headers = {
+            "content-type": "application/xml",
+            "X-RapidAPI-Key": "c274a97723msh69e78268b2374a8p14b8c3jsn4058e62a4501",
+            "X-RapidAPI-Host": "number-conversion-service.p.rapidapi.com"
+        }
+        response = requests.request("POST", soap_url, data=request_body, headers=headers)
+        root = ET.fromstring(response.text)
+        yelp_word = root[0][0][0].text + " star"
+        print("Yelp word: ", yelp_word)
     google_rating, place_id = get_rating_google(brewery_id)
+    if google_rating:
+        google_rating_floor = math.trunc(google_rating)
+        print("Google rating trunc: ", google_rating_floor)
+        soap_url = "https://number-conversion-service.p.rapidapi.com/webservicesserver/NumberConversion.wso"
+        request_body = f"<?xml version='1.0' encoding='utf-8'?><soap:Envelope xmlns:soap='http://schemas.xmlsoap.org/soap/envelope/'><soap:Body><NumberToWords xmlns='http://www.dataaccess.com/webservicesserver/'><ubiNum>{google_rating_floor}</ubiNum></NumberToWords></soap:Body></soap:Envelope>"
+        headers = {
+            "content-type": "application/xml",
+            "X-RapidAPI-Key": "c274a97723msh69e78268b2374a8p14b8c3jsn4058e62a4501",
+            "X-RapidAPI-Host": "number-conversion-service.p.rapidapi.com"
+        }
+        response = requests.request("POST", soap_url, data=request_body, headers=headers)
+        root = ET.fromstring(response.text)
+        google_word = root[0][0][0].text + " star"
+        print("Google word: ", google_word)
     print(yelp_rating, google_rating)
     if yelp_rating and google_rating:
-        return render_template('ratings.html', yelp_rating=yelp_rating, google_rating=google_rating)
+        return render_template('ratings.html', yelp_rating=yelp_rating, google_rating=google_rating, yelp_word=yelp_word, google_word=google_word)
     elif yelp_rating:
-        return render_template('ratings.html', yelp_rating=yelp_rating, google_rating=None)
+        return render_template('ratings.html', yelp_rating=yelp_rating, google_rating=None, yelp_word=yelp_word, google_word=None)
     elif google_rating:
-        return render_template('ratings.html', yelp_rating=None, google_rating=google_rating)
+        return render_template('ratings.html', yelp_rating=None, google_rating=google_rating, yelp_word=None, google_word=google_word)
     else:
         return render_template('error.html', error=True)
