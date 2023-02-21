@@ -45,9 +45,9 @@ Takes a brewery and returns its google and yelp ratings.
 
 To run this project, you will need to set the following environment variables in your terminal
 
-`FLASK_APP = app.py`
+`export FLASK_APP=app.py`
 
-`FLASK_ENV = development`
+`export FLASK_ENV=development`
 
 
 ## Run Locally
