@@ -13,7 +13,7 @@ def get_rating_google(brewery_name):
     response = requests.get(url)
     data = response.json()
     if data['status'] == 'OK':
-        return data['candidates'][0]['rating'], data['candidates'][0]['place_id']
+        return data['candidates'][0]['rating']
 
 
 def get_rating_yelp(brewery_name):

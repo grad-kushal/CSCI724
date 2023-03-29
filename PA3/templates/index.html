@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PA3 Query System</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+  <div class="container mt-4">
+    <h1 class="text-center mb-4">API/Mashup Query System</h1>
+    <form action="{{ url_for('results') }}" id="search-form" method="post">
+        <div class="form-group">
+            <label for="search-type">Search for:</label>
+            <select class="form-control" id="search-type" name="search-type">
+                <option value="apis">APIs</option>
+                <option value="mashups">Mashups</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="updated-year">Updated year:</label>
+            <input type="number" min="1950" max="2023" class="form-control" id="updated-year" name="updated-year" step="1" value="2013">
+        </div>
+        <div class="form-group">
+            <label for="category">Category:</label>
+            <input type="text" class="form-control" id="category" name="category">
+        </div>
+        <div class="form-group">
+            <label for="rating">Rating:</label>
+        <input type="number" min="0" max="10" step="0.1" class="form-control" id="rating" name="rating">
+      </div>
+      <div class="form-group">
+        <label for="tags">Tags:</label>
+        <input type="text" class="form-control" name="tags" id="tags" placeholder="Enter tags separated by commas">
+      </div>
+      <br>
+      <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+  </div>
+</body>
+</html>

@@ -4,10 +4,9 @@ import xml.etree.ElementTree as ET
 import requests.sessions
 from flask import Flask, render_template, request
 
+import db_interface
 from web_interface import get_restaurants, \
     get_breweries_by_location, get_rating_google, get_rating_yelp
-import mysql.connector
-import uuid
 
 app = Flask(__name__)
 
@@ -27,7 +26,6 @@ def breweries():
     Render the breweries page
     :return:
     """
-    conversation_id = str(uuid.uuid4())
     address = request.form['address']
     loc = address.replace("(", "").replace(")", "").split(",")
     lat = float(loc[0].strip())
@@ -38,7 +36,7 @@ def breweries():
     # print(postal_code)
     if lat and lng:
         breweries = get_breweries_by_location(lat, lng)
-        return render_template('breweries.html', breweries=breweries, conversation_id=conversation_id)
+        return render_template('breweries.html', breweries=breweries)
     else:
         return render_template('error.html', error=True)
 
@@ -60,55 +58,24 @@ def restaurants():
     return render_template('restaurants.html', restaurants=restaurants)
 
 
-@app.errorhandler(404)
-def page_not_found(e):
-    """
-    Render the error page
-    :param e:
-    :return:
-    """
-    return render_template('error.html', error=True)
-
-
-@app.route('/reviews/<conversation_id>/<brewery_id>')
-def reviews(brewery_id, conversation_id):
+@app.route('/reviews/<brewery_id>')
+def reviews(brewery_id):
     """
     Render the reviews page
     :param brewery_id:  the id of the brewery
-    :param conversation_id: the id of the conversation
     :return: ratings
     """
-    mydb = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="",
-        database="pa2"
-    )
-    print(mydb, "KKKKKKKKKKKKKKKKK")
-    cur = mydb.cursor()
-    if conversation_id is not None:
-        cur.execute(f"SELECT * FROM conversation WHERE conversation_id = '{conversation_id}'")
-        result = cur.fetchone()
-        if result is None:
-            cur.execute(f"INSERT INTO conversation VALUES ('{conversation_id}', '{brewery_id}')")
-            mydb.commit()
-        else:
-            cur.execute(f"UPDATE conversation SET brewery_id = '{brewery_id}' WHERE conversation_id = '{conversation_id}'")
-            mydb.commit()
-    cur.execute(f"SELECT * FROM brewery WHERE id = '{brewery_id}'")
-    result = cur.fetchone()
-    if result is not None:
-        yelp_rating, google_rating = result[2], result[1]
+    if db_interface.exists_in_database(brewery_id):
+        yelp_rating, google_rating = db_interface.get_ratings_from_database(brewery_id)
     else:
         yelp_rating = get_rating_yelp(brewery_id)
         google_rating = get_rating_google(brewery_id)
         brewery = {
             "id": brewery_id,
-            "yelp": yelp_rating if yelp_rating else 0.0,
-            "google": google_rating if google_rating else 0.0
+            "yelp": yelp_rating,
+            "google": google_rating
         }
-        cur.execute(f"INSERT INTO brewery VALUES ('{brewery['id']}', '{brewery['google']}', '{brewery['yelp']}')")
-        mydb.commit()
+        db_interface.insert_brewery_rating(brewery)
     if yelp_rating:
         yelp_rating_floor = math.trunc(yelp_rating)
         print("Yelp rating trunc: ", yelp_rating_floor)
@@ -139,13 +106,10 @@ def reviews(brewery_id, conversation_id):
         print("Google word: ", google_word)
     print(yelp_rating, google_rating)
     if yelp_rating and google_rating:
-        return render_template('ratings.html', yelp_rating=yelp_rating, google_rating=google_rating,
-                               yelp_word=yelp_word, google_word=google_word)
+        return render_template('ratings.html', yelp_rating=yelp_rating, google_rating=google_rating, yelp_word=yelp_word, google_word=google_word)
     elif yelp_rating:
-        return render_template('ratings.html', yelp_rating=yelp_rating, google_rating=None, yelp_word=yelp_word,
-                               google_word=None)
+        return render_template('ratings.html', yelp_rating=yelp_rating, google_rating=None, yelp_word=yelp_word, google_word=None)
     elif google_rating:
-        return render_template('ratings.html', yelp_rating=None, google_rating=google_rating, yelp_word=None,
-                               google_word=google_word)
+        return render_template('ratings.html', yelp_rating=None, google_rating=google_rating, yelp_word=None, google_word=google_word)
     else:
         return render_template('error.html', error=True)
