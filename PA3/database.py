@@ -1,3 +1,5 @@
+import re
+
 import pymongo
 
 
@@ -71,16 +73,17 @@ def get_documents(mydb, collection_name, updated_year, category, rating, tags):
     # Create the query
     query = {}
     if updated_year and updated_year != 'all':
-        query['updated_year'] =
+        pattern = '^' + str(updated_year) + '-.*'
+        sub_query = {'$regex': pattern}
+        query['updated'] = sub_query
     if category and category != 'all':
         query['category'] = category
     if rating and rating != 'all':
         query['rating'] = str(rating)
     if tags and tags != 'all':
-        print("Tags: ", tags)
-        tags_new = ",".join(tags)
-        tags_param = "[" + tags_new + "]"
-        query['tags'] = {'$all': tags}
+        tags = [tag.strip() for tag in tags]
+        sub_query = {'$in': tags}
+        query['tags'] = sub_query
     print("Query: ", query)
     # Get the documents
     documents = collection.find(query)

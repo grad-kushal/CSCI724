@@ -12,24 +12,24 @@
 <body>
   <div class="container">
     <h2 class="text-center">Results</h2>
-    <table class="table">
+    <table class="table table-bordered">
       <thead>
         <tr>
-          <th>Title</th>
-          <th>Summary</th>
-          <th>Rating
-          <th>Category</th>
-          <th>Description</th>
+          <th class="text-center">Title</th>
+          <th class="text-center">Summary</th>
+          <th class="text-center">Rating
+          <th class="text-center">Category</th>
+          <th class="text-center">Description</th>
         </tr>
       </thead>
       <tbody>
         {% for result in results %}
           <tr>
-            <td>{{ result['title'] }}</td>
-            <td>{{ result['summary'] }}</td>
-            <td>{{ result['rating'] }}</td>
-            <td>{{ result['category'] }}</td>
-            <td>{{ result['description'] }}</td>
+            <td class="text-center">{{ result['title'] }}</td>
+            <td class="text-justify">{{ result['summary'] }}</td>
+            <td class="text-center">{{ result['rating'] }}</td>
+            <td class="text-center">{{ result['category'] }}</td>
+            <td class="text-justify">{{ result['description'] }}</td>
           </tr>
         {% endfor %}
       </tbody>
