@@ -11,15 +11,16 @@
 </head>
 <body>
   <div class="container">
-    <h2 class="text-center">Results</h2>
+    <h2 class="text-center">Result - {{ size }} Mashup(s)</h2>
     <table class="table table-bordered">
       <thead>
         <tr>
           <th class="text-center">Title</th>
           <th class="text-center">Summary</th>
-          <th class="text-center">Rating
-          <th class="text-center">Category</th>
-          <th class="text-center">Description</th>
+          <th class="text-center">Rating</th>
+          <th class="text-center">Tags</th>
+          <th class="text-center">APIs</th>
+          <th class="text-center">Updated</th>
         </tr>
       </thead>
       <tbody>
@@ -28,8 +29,17 @@
             <td class="text-center">{{ result['title'] }}</td>
             <td class="text-justify">{{ result['summary'] }}</td>
             <td class="text-center">{{ result['rating'] }}</td>
-            <td class="text-center">{{ result['category'] }}</td>
-            <td class="text-justify">{{ result['description'] }}</td>
+            <td class="text-center">
+              {% for tag in result['tags'] %}
+                <span class="badge badge-secondary">{{ tag }}</span>
+              {% endfor %}
+            </td>
+            <td class="text-center">
+              {% for api in result['apis'] %}
+                <a href="{{ api['url'] }}" target="_blank">{{ api['name'] }}</a>
+              {% endfor %}
+            </td>
+            <td class="text-center">{{ result['updated'] }}</td>
           </tr>
         {% endfor %}
       </tbody>

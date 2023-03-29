@@ -40,11 +40,15 @@ def results():
         mashup_data, api_data = parser.read_data()
         database.insert_documents(mydb, 'mashups', mashup_data)
         database.insert_documents(mydb, 'apis', api_data)
-    results = database.get_documents(mydb, collection_name, updated_year, category, rating, tag_list)
-    results_list = list(results)
+    result = database.get_documents(mydb, collection_name, updated_year, category, rating, tag_list)
+    results_list = list(result)
+    print("Results: ", results_list)
     print(len(results_list))
-    if results:
-        return render_template('results.html', results=results_list)
+    # tags = results_list['tags']
+    if result and collection_name == 'apis':
+        return render_template('results_a.html', results=results_list, size=len(results_list))
+    elif result and collection_name == 'mashups':
+        return render_template('results_m.html', results=results_list, size=len(results_list))
     else:
         return render_template('error.html', error=True)
 

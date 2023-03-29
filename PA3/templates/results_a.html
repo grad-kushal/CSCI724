@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PA3 Query System</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h2 class="text-center">Result - {{ size }} API(s)</h2>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th class="text-center">Title</th>
+          <th class="text-center">Rating</th>
+          <th class="text-center">Tags</th>
+          <th class="text-center">Category</th>
+          <th class="text-center">Description</th>
+          <th class="text-center">Endpoint</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for result in results %}
+          <tr>
+            <td class="text-center">{{ result['title'] }}</td>
+            <td class="text-center">{{ result['rating'] }}</td>
+            <td class="text-center">
+              {% for tag in result['tags'] %}
+                <span class="badge badge-secondary">{{ tag }}</span>
+              {% endfor %}
+            </td>
+            <td class="text-center">{{ result['category'] }}</td>
+            <td class="text-justify">{{ result['description'] }}</td>
+            <td class="text-center"> <a href="{{ result['serviceEndpoint'] }}" target="_blank">{{ result['title'] }}</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
