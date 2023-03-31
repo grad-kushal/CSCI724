@@ -13,7 +13,12 @@
   <div class="container">
     <h2 class="text-center">Result - {{ size }} API(s)</h2>
     <table class="table table-bordered">
-      <thead>
+      <thead class="bg-secondary">
+          <style>
+            th {
+              background-color: #cccccc;
+            }
+          </style>
         <tr>
           <th class="text-center">Title</th>
           <th class="text-center">Rating</th>
@@ -21,6 +26,7 @@
           <th class="text-center">Category</th>
           <th class="text-center">Description</th>
           <th class="text-center">Endpoint</th>
+          <th class="text-center">Protocols</th>
         </tr>
       </thead>
       <tbody>
@@ -36,6 +42,7 @@
             <td class="text-center">{{ result['category'] }}</td>
             <td class="text-justify">{{ result['description'] }}</td>
             <td class="text-center"> <a href="{{ result['serviceEndpoint'] }}" target="_blank">{{ result['title'] }}</a></td>
+            <td class="text-center">{{ result['protocols'] }}</td>
           </tr>
         {% endfor %}
       </tbody>

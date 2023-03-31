@@ -56,7 +56,7 @@ if __name__ == '__main__':
     main()
 
 
-def get_documents(mydb, collection_name, updated_year, category, rating, tags):
+def get_documents(mydb, collection_name, updated_year, category, rating, tags, protocols):
     """
     Get the documents from the database
     :param mydb: database object
@@ -65,9 +65,10 @@ def get_documents(mydb, collection_name, updated_year, category, rating, tags):
     :param category: category
     :param rating: rating
     :param tags: tags
+    :param protocols: protocols
     :return: the documents
     """
-    print("Query parameters: ", collection_name, updated_year, category, rating, tags)
+    print("Query parameters: ", collection_name, updated_year, category, rating, tags, protocols)
     # Get the collection
     collection = mydb[collection_name]
     # Create the query
@@ -76,16 +77,51 @@ def get_documents(mydb, collection_name, updated_year, category, rating, tags):
         pattern = '^' + str(updated_year) + '-.*'
         sub_query = {'$regex': pattern}
         query['updated'] = sub_query
-    if category and category != 'all':
+    if category and category != 'all' and collection_name == 'apis':
         query['category'] = category
     if rating and rating != 'all':
-        query['rating'] = str(rating)
+        query['rating'] = rating
     if tags and tags != 'all':
         tags = [tag.strip() for tag in tags]
         sub_query = {'$in': tags}
         query['tags'] = sub_query
+    if protocols and protocols != 'all' and collection_name == 'apis':
+        protocols = protocols.split(' ')
+        sub_query = {'$in': protocols}
+        query['protocols'] = sub_query
     print("Query: ", query)
     # Get the documents
     documents = collection.find(query)
+    # Return the documents
+    return documents
+
+
+def get_documents_by_keywords(mydb, collection_name, keywords):
+    """
+    Get the documents from the database by keywords
+    :param mydb: database object
+    :param collection_name: collection name
+    :param keywords: keywords list
+    :return: the documents matching the keywords
+    """
+    print("Query parameters: ", collection_name, keywords)
+    # Get the collection
+    collection = mydb[collection_name]
+    # Create the aggregation pipeline
+    pipeline = []
+    if keywords:
+        for keyword in keywords:
+            # Create the match stage
+            match_stage = {}
+            keyword = keyword.strip()
+            keyword = re.escape(keyword)
+            keyword = keyword.replace('\ ', '.*')
+            keyword = '.*' + keyword + '.*'
+            sub_query = {'$regex': keyword, '$options': 'i'}
+            match_stage['$or'] = [{'name': sub_query}, {'description': sub_query}, {'summary': sub_query}]
+            pipeline.append({'$match': match_stage})
+    print("Pipeline: ", pipeline)
+    # Get the documents
+    documents = collection.aggregate(pipeline)
     # Return the documents
     return documents
