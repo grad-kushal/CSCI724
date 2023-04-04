@@ -56,9 +56,10 @@ if __name__ == '__main__':
     main()
 
 
-def get_documents(mydb, collection_name, updated_year, category, rating, tags, protocols):
+def get_documents(mydb, collection_name, updated_year, category, rating, rating_comparison, tags, protocols):
     """
     Get the documents from the database
+    :param rating_comparison: rating comparison operator
     :param mydb: database object
     :param collection_name: collection name
     :param updated_year: updated year
@@ -79,8 +80,13 @@ def get_documents(mydb, collection_name, updated_year, category, rating, tags, p
         query['updated'] = sub_query
     if category and category != 'all' and collection_name == 'apis':
         query['category'] = category
-    if rating and rating != 'all':
-        query['rating'] = rating
+    if rating_comparison and rating:
+        if rating_comparison == 'gt':
+            query['rating'] = {'$gt': rating}
+        elif rating_comparison == 'lt':
+            query['rating'] = {'$lt': rating}
+        elif rating_comparison == 'eq':
+            query['rating'] = {'$eq': rating}
     if tags and tags != 'all':
         tags = [tag.strip() for tag in tags]
         sub_query = {'$in': tags}

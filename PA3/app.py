@@ -73,18 +73,22 @@ def results():
     Render the results page
     :return:
     """
+    print("Advanced search")
     collection_name = request.form['search-type']
     updated_year = request.form['updated-year']
     category = request.form['category']
     category = category.strip()
     rating = request.form['rating']
-    rating = rating.strip() if rating else 0
+    rating = rating.strip() if rating else 0.0
+    rating = float(rating)
+    rating_comparison = request.form['rating-comparison']
     tags = request.form['tags']
     protocols = request.form['protocols']
     tag_list = []
     if tags:
         tag_list = tags.split(',')
-    result = database.get_documents(mydb, collection_name, updated_year, category, float(rating), tag_list, protocols)
+    result = database.get_documents(mydb, collection_name, updated_year, category, float(rating), rating_comparison,
+                                    tag_list, protocols)
     results_list = list(result)
     print(len(results_list), " results found.")
     # tags = results_list['tags']
