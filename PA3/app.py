@@ -107,6 +107,7 @@ def page_not_found(e):
     :param e:
     :return:
     """
+    print("404", e)
     return render_template('error.html', error=True)
 
 
@@ -117,6 +118,7 @@ def page_not_found(e):
     :param e:
     :return:
     """
+    print("403", e)
     return render_template('error.html', error=True)
 
 
@@ -127,6 +129,7 @@ def page_not_found(e):
     :param e:
     :return:
     """
+    print("400", e)
     return render_template('error.html', error=True)
 
 

@@ -124,7 +124,7 @@ def get_documents_by_keywords(mydb, collection_name, keywords):
             keyword = keyword.replace('\ ', '.*')
             keyword = '.*' + keyword + '.*'
             sub_query = {'$regex': keyword, '$options': 'i'}
-            match_stage['$or'] = [{'name': sub_query}, {'description': sub_query}, {'summary': sub_query}]
+            match_stage['$or'] = [{'title': sub_query}, {'description': sub_query}, {'summary': sub_query}]
             pipeline.append({'$match': match_stage})
     print("Pipeline: ", pipeline)
     # Get the documents
