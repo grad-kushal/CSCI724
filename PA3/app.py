@@ -78,17 +78,23 @@ def results():
     updated_year = request.form['updated-year']
     category = request.form['category']
     category = category.strip()
+    category = category.lower()
     rating = request.form['rating']
     rating = rating.strip() if rating else 0.0
     rating = float(rating)
     rating_comparison = request.form['rating-comparison']
     tags = request.form['tags']
     protocols = request.form['protocols']
+    apis = request.form['apis']
+    api_list = []
     tag_list = []
     if tags:
         tag_list = tags.split(',')
+    if apis:
+        api_list = apis.split(',')
+        api_list = [api.strip() for api in api_list]
     result = database.get_documents(mydb, collection_name, updated_year, category, float(rating), rating_comparison,
-                                    tag_list, protocols)
+                                    tag_list, protocols, api_list)
     results_list = list(result)
     print(len(results_list), " results found.")
     # tags = results_list['tags']

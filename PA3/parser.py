@@ -73,8 +73,8 @@ def read_api_data(filename):
     for line in lines:
         fields = line.strip().split('$#$')
         api_record = {
-            'id': fields[0],
-            'title': fields[1],
+            'id': fields[0].lower(),
+            'title': fields[1].lower(),
             'summary': fields[2],
             'rating': float(fields[3]) if fields[3] else 0,
             'name': fields[4],

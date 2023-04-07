@@ -56,9 +56,10 @@ if __name__ == '__main__':
     main()
 
 
-def get_documents(mydb, collection_name, updated_year, category, rating, rating_comparison, tags, protocols):
+def get_documents(mydb, collection_name, updated_year, category, rating, rating_comparison, tags, protocols, apis):
     """
     Get the documents from the database
+    :param apis: apis
     :param rating_comparison: rating comparison operator
     :param mydb: database object
     :param collection_name: collection name
@@ -89,8 +90,11 @@ def get_documents(mydb, collection_name, updated_year, category, rating, rating_
             query['rating'] = {'$eq': rating}
     if tags and tags != 'all':
         tags = [tag.strip() for tag in tags]
-        sub_query = {'$in': tags}
+        sub_query = {'$in': tags}                   # $in is used to match any of the tag values in the array
         query['tags'] = sub_query
+    if apis and apis != 'all' and collection_name == 'mashups':
+        sub_query = {'$all': apis}                  # $all is used to match all of the api values in the array
+        query['apis.name'] = sub_query
     if protocols and protocols != 'all' and collection_name == 'apis':
         protocols = protocols.split(' ')
         sub_query = {'$in': protocols}
