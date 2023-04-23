@@ -1,3 +1,5 @@
+from flask import app
+
 import database
 from parser import read_mashup_data, read_api_data
 

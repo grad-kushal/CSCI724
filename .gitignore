@@ -143,4 +143,5 @@ Book/
 *.dat
 *.txt
 *.idea/
+*data/
 
