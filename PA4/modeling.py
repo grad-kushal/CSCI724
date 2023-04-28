@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.sparse import hstack
+from sklearn.decomposition import LatentDirichletAllocation
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 from gensim.models import Word2Vec
@@ -71,21 +72,24 @@ def apply_word_embeddings(features):
     return feature_matrix
 
 
-def transform_to_non_negative(word_embeddings_feature_matrix):
+def apply_lda_topic_modeling(features):
     """
-    Transform the word embeddings feature matrix to non-negative values
-    :param word_embeddings_feature_matrix: Word embeddings feature matrix
-    :return: Non-negative word embeddings feature matrix
+    Apply LDA topic modeling
+    :param features: Features
+    :return: LDA topic modeling feature matrix
     """
-    return word_embeddings_feature_matrix - np.min(word_embeddings_feature_matrix, axis=0)
-
-
-def apply_tfidf_transformer(word_embeddings_feature_matrix):
-    """
-    Apply TF-IDF transformer
-    :param word_embeddings_feature_matrix: Word embeddings feature matrix
-    :return: TF-IDF transformed feature matrix
-    """
-    transformer = TfidfVectorizer(stop_words='english')
-    feature_matrix = transformer.fit_transform(word_embeddings_feature_matrix)
+    lda = LatentDirichletAllocation(n_components=100, random_state=0)
+    feature_matrix = lda.fit_transform(apply_tfidf_vectorizer(features))
     return feature_matrix
+
+
+def get_feature_matrices(features):
+    """
+    Get feature matrices
+    :param features: Features
+    :return: Feature matrices
+    """
+    tfidf_feature_matrix = apply_tfidf_vectorizer(features)
+    word_embeddings_feature_matrix = apply_word_embeddings(features)
+    lda_feature_matrix = apply_lda_topic_modeling(features)
+    return tfidf_feature_matrix, word_embeddings_feature_matrix, lda_feature_matrix
