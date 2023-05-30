@@ -116,7 +116,7 @@ def reviews(brewery_id, conversation_id):
         request_body = f"<?xml version='1.0' encoding='utf-8'?><soap:Envelope xmlns:soap='http://schemas.xmlsoap.org/soap/envelope/'><soap:Body><NumberToWords xmlns='http://www.dataaccess.com/webservicesserver/'><ubiNum>{yelp_rating_floor}</ubiNum></NumberToWords></soap:Body></soap:Envelope>"
         headers = {
             "content-type": "application/xml",
-            "X-RapidAPI-Key": "c274a97723msh69e78268b2374a8p14b8c3jsn4058e62a4501",
+            "X-RapidAPI-Key": "",
             "X-RapidAPI-Host": "number-conversion-service.p.rapidapi.com"
         }
         response = requests.request("POST", soap_url, data=request_body, headers=headers)
